@@ -1,0 +1,12 @@
+# Dependensi Node.js (jangan diupload karena berat dan bisa di-install lewat npm install)
+node_modules/
+package-lock.json
+
+# File log dan temporary
+npm-debug.log*
+*.log
+
+# File backup lokal otomatis jika ada
+*.tmp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MADROPI - Sistem Rekapitulasi & Invoice Pengiriman Material</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       Header Aplikasi
+       ========================================================= -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">🚛</div>
+      <div class="brand-text">
+        <h1>MADROPI - INVOICE PENGIRIMAN MATERIAL</h1>
+        <p>Terintegrasi Template Excel Asli (100% Presisi Format Dokumen)</p>
+      </div>
+    </div>
+    <div class="header-actions no-print">
+      <button type="button" class="btn btn-secondary" id="btn-save-history" title="Simpan invoice saat ini ke riwayat arsip">
+        💾 Simpan Riwayat
+      </button>
+      <button type="button" class="btn btn-excel" id="btn-download-excel" title="Download file Excel (.xlsx) resmi berbasis template asli Anda">
+        📥 Unduh File Excel (.xlsx)
+      </button>
+      <button type="button" class="btn btn-primary" id="btn-print-invoice" title="Cetak atau Simpan sebagai PDF via Browser">
+        🖨️ Cetak / Simpan PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       Bar Navigasi Tab
+       ========================================================= -->
+  <nav class="tabs-bar no-print">
+    <button type="button" class="tab-btn active" data-tab="buat-invoice">
+      📝 Buat Invoice
+    </button>
+    <button type="button" class="tab-btn" data-tab="master-plat">
+      🚛 Master Plat Mobil <span class="tab-badge" id="plat-count-badge">3 Unit</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="riwayat-invoice">
+      📁 Riwayat Invoice <span class="tab-badge" id="history-count-badge">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="panduan">
+      ℹ️ Catatan & Panduan
+    </button>
+  </nav>
+
+  <!-- =========================================================
+       Konten Tab Utama
+       ========================================================= -->
+  <main class="main-content">
+
+    <!-- ==================== TAB 1: BUAT INVOICE ==================== -->
+    <section class="tab-pane active" id="tab-buat-invoice">
+      <div class="invoice-workspace">
+
+        <!-- Sisi Kiri: Formulir Editor Input -->
+        <div class="form-section no-print">
+
+          <!-- Card Informasi Invoice -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📌 Informasi Invoice & Proyek</span>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-load-sample" title="Muat data persis seperti contoh Excel Anda">
+                  ⚡ Muat Contoh Excel
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" id="btn-new-invoice" title="Kosongkan form">
+                  🔄 Buat Baru
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                  <label for="input-lokasi-proyek">Lokasi Proyek / Perusahaan :</label>
+                  <input type="text" id="input-lokasi-proyek" class="form-control" value="CONDO VILLAS SUMMARECON" placeholder="Contoh: CONDO VILLAS SUMMARECON">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-tanggal-invoice">Tanggal Invoice (Bawah) :</label>
+                  <input type="date" id="input-tanggal-invoice" class="form-control">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-kota-invoice">Kota Penandatangan :</label>
+                  <input type="text" id="input-kota-invoice" class="form-control" value="Tangerang" placeholder="Tangerang">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-penandatangan">Nama Penandatangan :</label>
+                  <input type="text" id="input-penandatangan" class="form-control" value="MADROPI" placeholder="MADROPI">
+                </div>
+
+                <div class="form-group">
+                  <label for="input-keterangan-default">Keterangan Default :</label>
+                  <div style="display: flex; gap: 6px;">
+                    <input type="text" id="input-keterangan-default" class="form-control" value="CV. SUMMARECON" placeholder="CV. SUMMARECON">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-apply-ket-all" title="Terapkan keterangan ini ke semua baris di bawah">
+                      Terapkan
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Tabel Pengiriman (Input Baris) -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📦 Rincian Pengiriman Material (Makadam)</span>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-apply-date-all" title="Samakan tanggal semua baris dengan tanggal invoice">
+                  📅 Samakan Tgl
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-add-row">
+                  ➕ Tambah Baris
+                </button>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 10px;">
+              <p style="font-size: 0.82rem; color: var(--gray-600); margin-bottom: 8px;">
+                💡 <em>Pilih <strong>Plat Nomor</strong> untuk mengisi dimensi bak mobil secara otomatis, atau ubah angka dimensi (P, L, T) secara manual. Volume & Total akan terhitung otomatis!</em>
+              </p>
+
+              <div class="table-responsive">
+                <table class="editor-table">
+                  <thead>
+                    <tr>
+                      <th class="col-no">No</th>
+                      <th class="col-date">Tanggal</th>
+                      <th class="col-plat">Plat Nomor</th>
+                      <th class="col-dim" title="Panjang bak (cm)">P</th>
+                      <th class="col-dim" title="Lebar bak (cm)">L</th>
+                      <th class="col-dim" title="Tinggi bak (cm)">T</th>
+                      <th class="col-vol" title="Volume = (P x L x T) / 1.000.000">Vol (m³)</th>
+                      <th class="col-price" title="Harga tetap 200.000 / m³">Harga/m³</th>
+                      <th class="col-tot" title="Total = Volume x Harga">Total (Rp)</th>
+                      <th class="col-ket">Keterangan</th>
+                      <th class="col-act">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="editor-table-body">
+                    <!-- Baris tabel editor di-generate oleh app.js -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Grand Total & Terbilang Box -->
+              <div class="grand-summary-box">
+                <div class="grand-summary-row">
+                  <span class="grand-title">GRAND TOTAL :</span>
+                  <span class="grand-val" id="editor-grand-total">Rp 22.804.400</span>
+                </div>
+                <div class="terbilang-text">
+                  <strong>Terbilang : </strong>
+                  <span id="editor-terbilang">Dua puluh dua juta delapan ratus empat ribu empat ratus rupiah</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Sisi Kanan: Lembar Preview Kertas A4 (PERSIS 100% EXCEL ASLI) -->
+        <div class="preview-container">
+          <div class="preview-toolbar no-print">
+            <span style="font-weight: 700; color: var(--gray-700); font-size: 0.88rem;">
+              📄 Live Preview Lembar A4 (Persis Template Excel Asli)
+            </span>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-download-pdf" title="Unduh langsung PDF">
+                📄 Unduh PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="paper-wrapper">
+            <!-- LEMBAR INVOICE CETAK KERTAS A4 PERSIS -->
+            <div class="invoice-paper" id="invoice-paper">
+              <!-- Di-render secara real-time oleh app.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: MASTER DATA PLAT MOBIL ==================== -->
+    <section class="tab-pane" id="tab-master-plat">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🚛 Kelola Plat Nomor & Dimensi Mobil Armada</span>
+          <button type="button" class="btn btn-primary" onclick="openAddPlatModal()">
+            ➕ Daftarkan Plat Baru
+          </button>
+        </div>
+        <div class="card-body">
+          <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 16px;">
+            Daftarkan plat nomor kendaraan armada Anda beserta ukuran bak mobil standar (Panjang, Lebar, Tinggi). Saat membuat invoice, Anda cukup memilih plat nomor dari dropdown, dan dimensinya akan otomatis terisi.
+          </p>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">No</th>
+                  <th>Plat Nomor</th>
+                  <th>Panjang Bak</th>
+                  <th>Lebar Bak</th>
+                  <th>Tinggi Bak</th>
+                  <th>Volume Bawaan</th>
+                  <th>Keterangan / Armada</th>
+                  <th style="width: 140px; text-align: center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="master-plat-tbody">
+                <!-- Di-render oleh app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: RIWAYAT INVOICE ==================== -->
+    <section class="tab-pane" id="tab-riwayat-invoice">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📁 Riwayat Arsip Invoice Tersimpan</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 16px;">
+            Semua invoice yang Anda simpan akan tersimpan di komputer Anda. Anda dapat membuka kembali invoice lama untuk diedit, dicetak ulang, atau dijadikan acuan invoice berikutnya.
+          </p>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">No</th>
+                  <th>Lokasi Proyek & Tanggal</th>
+                  <th>Jumlah Ritase</th>
+                  <th>Grand Total</th>
+                  <th>Waktu Simpan</th>
+                  <th style="width: 130px; text-align: center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Di-render oleh app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: CATATAN & PANDUAN ==================== -->
+    <section class="tab-pane" id="tab-panduan">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        
+        <!-- Info Rekening Tetap -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔒 Catatan Pembayaran Resmi (Tetap)</span>
+          </div>
+          <div class="card-body" style="font-size: 0.9rem; line-height: 1.6;">
+            <p>Sesuai instruksi, format catatan rekening tidak diubah dan selalu tercetak di lembar invoice:</p>
+            <div style="background: var(--gray-50); border-left: 4px solid var(--primary); padding: 12px 16px; margin: 14px 0; border-radius: 4px; font-family: monospace;">
+              <strong>Catatan :</strong><br>
+              1. Pembayaran dilakukan secara transfer ke rekening tujuan<br>
+              No. Rek Bank BCA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;723-544-6995 A/N RETNO HANDAYANI
+            </div>
+            <p style="color: var(--gray-600); font-size: 0.85rem;">
+              Tanda tangan di kanan bawah selalu diset otomatis atas nama <strong>MADROPI</strong> dengan tanggal cetak invoice yang dapat Anda sesuaikan.
+            </p>
+          </div>
+        </div>
+
+        <!-- Panduan Cetak PDF Persis -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🖨️ Panduan Cetak / Simpan PDF Presisi</span>
+          </div>
+          <div class="card-body" style="font-size: 0.88rem; line-height: 1.6;">
+            <p><strong>Pilihan 1 (Paling Sempurna): Unduh File Excel (.xlsx)</strong><br>
+            Klik tombol hijau <strong>"📥 Unduh File Excel (.xlsx)"</strong>. File Excel yang dihasilkan dibuat langsung dari template master Anda sehingga 100% presisi. Buka di Excel, lalu pilih <em>File &gt; Save As &gt; PDF</em> atau <em>Print to PDF</em>.</p>
+
+            <p style="margin-top: 10px;"><strong>Pilihan 2: Cetak Langsung lewat Browser</strong><br>
+            Klik tombol <strong>"🖨️ Cetak / Simpan PDF"</strong> (atau Ctrl + P):<br>
+            - Destination: <em>Save as PDF</em><br>
+            - Paper Size: <em>A4</em>, Layout: <em>Portrait</em><br>
+            - Centang <em>"Background graphics" (Grafis latar belakang)</em>.</p>
+          </div>
+        </div>
+
+        <!-- Backup & Restore Data -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <span class="card-title">💾 Backup & Pemulihan Data Lokal</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size: 0.88rem; color: var(--gray-600); margin-bottom: 14px;">
+              Simpan salinan cadangan dari semua master plat nomor dan riwayat invoice Anda ke dalam file cadangan (JSON).
+            </p>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" id="btn-export-backup">
+                📤 Unduh File Cadangan (Backup Data)
+              </button>
+              <label class="btn btn-secondary" style="margin: 0; cursor: pointer;">
+                📥 Pulihkan dari File Cadangan (Restore)
+                <input type="file" id="input-import-backup" accept=".json" style="display: none;">
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       Modal Dialog: Tambah / Edit Plat Mobil
+       ========================================================= -->
+  <div class="modal-backdrop" id="modal-plat">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-plat-title">Tambah Plat Mobil Baru</span>
+        <button type="button" class="modal-close" onclick="closePlatModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="form-plat-id">
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="form-plat-nomor">Nomor Plat Mobil :</label>
+          <input type="text" id="form-plat-nomor" class="form-control" placeholder="Contoh: B 9451 GYV" style="text-transform: uppercase;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div class="form-group">
+            <label for="form-plat-p">Panjang Bak (cm) :</label>
+            <input type="number" id="form-plat-p" class="form-control" placeholder="580" step="any">
+          </div>
+          <div class="form-group">
+            <label for="form-plat-l">Lebar Bak (cm) :</label>
+            <input type="number" id="form-plat-l" class="form-control" placeholder="235" step="any">
+          </div>
+          <div class="form-group">
+            <label for="form-plat-t">Tinggi Bak (cm) :</label>
+            <input type="number" id="form-plat-t" class="form-control" placeholder="170" step="any">
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px dashed var(--gray-300); border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--gray-700);">Kapasitas Volume Bawaan:</span>
+          <strong id="modal-plat-preview-vol" style="font-size: 1.1rem; color: var(--primary);">0 m³</strong>
+        </div>
+
+        <div class="form-group">
+          <label for="form-plat-ket">Keterangan Armada / Nama Supir (Opsional) :</label>
+          <input type="text" id="form-plat-ket" class="form-control" placeholder="Contoh: Dump Truck Hino / Supir Pak Budi">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closePlatModal()">Batal</button>
+        <button type="button" class="btn btn-primary" onclick="savePlatModal()">Simpan Plat Mobil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skrip Aplikasi -->
+  <script src="js/vendor/html2pdf.bundle.min.js"></script>
+  <script src="js/terbilang.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
