@@ -4,7 +4,765 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MADROPI - Sistem Rekapitulasi & Invoice Pengiriman Material</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+/* =========================================================
+   MADROPI - Sistem Rekapitulasi & Invoice Pengiriman Material
+   Styling UI Dashboard & Print Template Presisi 100% Excel
+   ========================================================= */
+
+:root {
+  --primary: #1e40af;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --secondary: #0f766e;
+  --accent: #f59e0b;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --success: #16a34a;
+  --success-hover: #15803d;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  
+  /* Nilai Presisi dari file template.xlsx */
+  --excel-font: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --excel-header-bg: #D9EAF7;
+  --excel-yellow-bg: #FFFF00;
+  --excel-border: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f1f5f9;
+  color: var(--gray-800);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   Top Navigation / Header Bar
+   ========================================================= */
+.app-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  color: #ffffff;
+  padding: 12px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  background: rgba(255, 255, 255, 0.18);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.brand-text h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+.brand-text p {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* =========================================================
+   Tabs Navigation
+   ========================================================= */
+.tabs-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--gray-200);
+  padding: 0 24px;
+  display: flex;
+  gap: 8px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+  background-color: var(--gray-50);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-badge {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+/* =========================================================
+   Main Container
+   ========================================================= */
+.main-content {
+  max-width: 1440px;
+  margin: 20px auto;
+  padding: 0 20px 40px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Two-column layout for invoice editor & preview */
+.invoice-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .invoice-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   Card & Form Components
+   ========================================================= */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 18px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-body {
+  padding: 16px 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.form-control {
+  padding: 7px 11px;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: var(--gray-900);
+  transition: border-color 0.15s ease;
+  background-color: #fff;
+  width: 100%;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+
+.form-control[readonly] {
+  background-color: var(--gray-100);
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-success {
+  background-color: var(--success);
+  color: #fff;
+}
+.btn-success:hover {
+  background-color: var(--success-hover);
+}
+
+.btn-excel {
+  background-color: #107c41;
+  color: #fff;
+}
+.btn-excel:hover {
+  background-color: #0c5e31;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+}
+
+.btn-secondary {
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+.btn-secondary:hover {
+  background-color: var(--gray-200);
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 0.78rem;
+}
+
+/* =========================================================
+   Input Rows Table (Editor)
+   ========================================================= */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.editor-table th {
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+  font-weight: 600;
+  padding: 8px 6px;
+  border: 1px solid var(--gray-200);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.editor-table td {
+  padding: 5px 4px;
+  border: 1px solid var(--gray-200);
+  vertical-align: middle;
+}
+
+.editor-table input,
+.editor-table select {
+  padding: 5px 6px;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  width: 100%;
+}
+
+.editor-table input:focus,
+.editor-table select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.col-no { width: 34px; text-align: center; font-weight: 600; }
+.col-date { width: 125px; }
+.col-plat { width: 135px; }
+.col-dim { width: 62px; }
+.col-vol { width: 72px; text-align: center; font-weight: 600; }
+.col-price { width: 85px; text-align: right; }
+.col-tot { width: 95px; text-align: right; font-weight: 600; }
+.col-ket { width: 125px; }
+.col-act { width: 44px; text-align: center; }
+
+/* Grand total callout in editor */
+.grand-summary-box {
+  background: #fefce8;
+  border: 2px solid #facc15;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grand-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grand-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #854d0e;
+}
+
+.grand-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #854d0e;
+  background-color: #fef08a;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+
+.terbilang-text {
+  font-size: 0.9rem;
+  color: #713f12;
+  font-style: italic;
+  font-weight: 600;
+  border-top: 1px dashed #fde047;
+  padding-top: 6px;
+}
+
+/* =========================================================
+   Live Preview Paper (A4 EXACT EXCEL REPLICA)
+   ========================================================= */
+.preview-container {
+  position: sticky;
+  top: 80px;
+}
+
+.preview-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.paper-wrapper {
+  background: #64748b;
+  padding: 20px 10px;
+  border-radius: 0 0 12px 12px;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Kertas A4 Presisi Sesuai Ukuran Excel (Margin 0.25in kiri-kanan, 0.75in atas-bawah) */
+.invoice-paper {
+  background: #ffffff;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 19mm 6.35mm 19mm 6.35mm; /* 0.75in atas-bawah, 0.25in kiri-kanan */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  color: #000000;
+  font-family: var(--excel-font);
+  box-sizing: border-box;
+  position: relative;
+  font-size: 10pt;
+}
+
+/* Header Dokumen (Persis Row 1 & 2 di Excel) */
+.inv-title-container {
+  text-align: center;
+  margin-bottom: 13px; /* Tinggi Row 3 spacer */
+}
+
+.inv-main-title {
+  font-size: 14pt;
+  font-weight: bold;
+  line-height: 24pt; /* Row 1 height */
+  text-align: center;
+}
+
+.inv-sub-title {
+  font-size: 10pt;
+  font-weight: bold;
+  line-height: 18pt; /* Row 2 height */
+  text-align: center;
+}
+
+/* Tabel Invoice (Persis Lebar Kolom & Tinggi Baris Excel) */
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+  font-size: 10pt;
+  font-family: var(--excel-font);
+}
+
+.inv-table th,
+.inv-table td {
+  border: 1px solid var(--excel-border);
+  padding: 2px 4px;
+  line-height: 1.25;
+}
+
+.inv-table thead th {
+  background-color: var(--excel-header-bg) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  height: 27pt; /* Row 4 & Row 5 height */
+  font-size: 10pt;
+}
+
+.inv-table tbody tr {
+  height: 19.5pt; /* Rows 6 to 14 height di Excel */
+}
+
+.inv-table tbody td {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 10pt;
+}
+
+/* Grand Total Row (Row 15 di Excel) */
+.inv-table tr.grand-total-row {
+  height: 21pt;
+}
+
+.inv-table tr.grand-total-row td {
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+.inv-table tr.grand-total-row td.grand-total-label {
+  text-align: center;
+}
+
+.inv-table tr.grand-total-row td.grand-total-value {
+  background-color: var(--excel-yellow-bg) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  text-align: center;
+}
+
+.inv-table tr.grand-total-row td.grand-total-yellow-blank {
+  background-color: var(--excel-yellow-bg) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Terbilang Section (Row 17 di Excel) */
+.inv-terbilang-box {
+  margin-top: 12px; /* Row 16 spacer */
+  margin-bottom: 13.5px; /* Row 18 spacer */
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
+  line-height: 21.75pt;
+  text-align: left;
+}
+
+/* Catatan & Tanda Tangan Layout (Row 19 s/d 33 di Excel) */
+.inv-footer-layout {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  align-items: start;
+}
+
+.inv-notes-box {
+  font-size: 10pt;
+  line-height: 19.5pt;
+}
+
+.inv-notes-title {
+  font-weight: bold;
+}
+
+.inv-signature-box {
+  text-align: center;
+  font-size: 10pt;
+}
+
+.inv-sig-date {
+  line-height: 21.75pt;
+  margin-bottom: 130px; /* Jarak materai & tanda tangan (Row 25-32 di Excel) */
+}
+
+.inv-sig-name {
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 14.25pt;
+}
+
+/* =========================================================
+   Master Plat Tab & History Tab Styling
+   ========================================================= */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.data-table th {
+  background-color: var(--gray-100);
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--gray-200);
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: middle;
+}
+
+.data-table tr:hover {
+  background-color: var(--gray-50);
+}
+
+.plat-pill {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid #000;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 14px 18px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 18px;
+}
+
+.modal-footer {
+  padding: 12px 18px;
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* =========================================================
+   PRINT MEDIA RULES (PRESISI 100% EXCEL)
+   ========================================================= */
+@page {
+  size: A4 portrait;
+  margin: 0.75in 0.25in 0.75in 0.25in; /* Persis PageSetup Excel */
+}
+
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .app-header,
+  .tabs-bar,
+  .form-section,
+  .card,
+  .header-actions,
+  .preview-toolbar,
+  .no-print,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .invoice-workspace {
+    display: block !important;
+  }
+
+  .preview-container {
+    position: static !important;
+  }
+
+  .paper-wrapper {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: block !important;
+  }
+
+  .invoice-paper {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .inv-table thead th {
+    background-color: #D9EAF7 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .inv-table tr.grand-total-row td.grand-total-value,
+  .inv-table tr.grand-total-row td.grand-total-yellow-blank {
+    background-color: #FFFF00 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+</style>
 </head>
 <body>
 
@@ -375,10 +1133,1322 @@
     </div>
   </div>
 
-  <!-- Skrip Aplikasi -->
+  
+  <!-- Pustaka Eksternal (CDN dengan fallback lokal) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
   <script src="js/vendor/html2pdf.bundle.min.js"></script>
-  <script src="js/terbilang.js"></script>
-  <script src="js/app.js"></script>
+
+  <!-- Skrip Logika Aplikasi (Embedded Langsung - Anti Rusak / Anti Polos) -->
+  <script>
+/**
+ * Fungsi Konversi Angka ke Kata Terbilang Bahasa Indonesia
+ * Disesuaikan untuk Invoice Pengiriman Material MADROPI
+ */
+
+function terbilangIndonesia(angka) {
+  if (angka === null || angka === undefined || isNaN(angka)) {
+    return '-';
+  }
+
+  // Ambil nilai bulat absolut
+  const nilai = Math.floor(Math.abs(Number(angka)));
+
+  if (nilai === 0) {
+    return 'Nol rupiah';
+  }
+
+  const huruf = [
+    '', 'satu', 'dua', 'tiga', 'empat', 'lima',
+    'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'
+  ];
+
+  function sebut(n) {
+    let hasil = '';
+
+    if (n < 12) {
+      hasil = huruf[n];
+    } else if (n < 20) {
+      hasil = sebut(n - 10) + ' belas';
+    } else if (n < 100) {
+      const puluhan = Math.floor(n / 10);
+      const sisa = n % 10;
+      hasil = sebut(puluhan) + ' puluh' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 200) {
+      const sisa = n - 100;
+      hasil = 'seratus' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 1000) {
+      const ratusan = Math.floor(n / 100);
+      const sisa = n % 100;
+      hasil = sebut(ratusan) + ' ratus' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 2000) {
+      const sisa = n - 1000;
+      hasil = 'seribu' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 1000000) {
+      const ribuan = Math.floor(n / 1000);
+      const sisa = n % 1000;
+      hasil = sebut(ribuan) + ' ribu' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 1000000000) {
+      const jutaan = Math.floor(n / 1000000);
+      const sisa = n % 1000000;
+      hasil = sebut(jutaan) + ' juta' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else if (n < 1000000000000) {
+      const milyaran = Math.floor(n / 1000000000);
+      const sisa = n % 1000000000;
+      hasil = sebut(milyaran) + ' milyar' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    } else {
+      const triliunan = Math.floor(n / 1000000000000);
+      const sisa = n % 1000000000000;
+      hasil = sebut(triliunan) + ' triliun' + (sisa > 0 ? ' ' + sebut(sisa) : '');
+    }
+
+    return hasil.replace(/\s+/g, ' ').trim();
+  }
+
+  let teks = sebut(nilai);
+
+  if (!teks) return 'Nol rupiah';
+
+  // Huruf pertama kapital + akhiran rupiah
+  teks = teks.charAt(0).toUpperCase() + teks.slice(1) + ' rupiah';
+  return teks;
+}
+
+// Format mata uang Rupiah
+function formatRupiah(angka) {
+  if (angka === null || angka === undefined || isNaN(angka)) return '0';
+  return Math.round(Number(angka)).toLocaleString('id-ID');
+}
+
+// Format desimal volume (menggunakan koma, maksimal 3-4 digit di belakang koma tanpa trailing nol berlebih)
+function formatVolume(val) {
+  if (val === null || val === undefined || isNaN(val)) return '0';
+  const num = Number(val);
+  // Bulatkan ke 3 desimal
+  const rounded = Math.round(num * 1000) / 1000;
+  return rounded.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+}
+
+
+/**
+ * MADROPI - Logika Aplikasi & Pengelolaan Invoice
+ * Terintegrasi dengan template Excel asli & live preview presisi
+ */
+
+const STORAGE_KEYS = {
+  MASTER_PLAT: 'madropi_master_plat_v1',
+  INVOICE_HISTORY: 'madropi_invoice_history_v1',
+  SETTINGS: 'madropi_settings_v1',
+  CURRENT_DRAFT: 'madropi_current_draft_v1'
+};
+
+// Data master plat bawaan awal (sesuai contoh dokumen user)
+const DEFAULT_PLAT_LIST = [
+  { id: 'plat-1', nomor: 'B 9451 GYV', panjang: 580, lebar: 235, tinggi: 170, keterangan: 'Dump Truck 1' },
+  { id: 'plat-2', nomor: 'BA 9873 BU', panjang: 600, lebar: 235, tinggi: 160, keterangan: 'Dump Truck 2' },
+  { id: 'plat-3', nomor: 'B 9207 UYT', panjang: 600, lebar: 235, tinggi: 160, keterangan: 'Dump Truck 3' }
+];
+
+const NAMA_BULAN = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+function formatTanggalIndo(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return `${d.getDate()} ${NAMA_BULAN[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function getTodayIsoString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// State Global Aplikasi
+const AppState = {
+  activeTab: 'buat-invoice',
+  platList: [],
+  historyList: [],
+  currentInvoice: {
+    lokasiProyek: 'CONDO VILLAS SUMMARECON',
+    tanggalInvoice: '2026-10-10',
+    kotaInvoice: 'Tangerang',
+    namaPenandatangan: 'MADROPI',
+    keteranganDefault: 'CV. SUMMARECON',
+    items: []
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadDataFromStorage();
+  initEventListeners();
+  renderPlatDropdowns();
+  renderMasterPlatTable();
+  renderHistoryTable();
+
+  if (AppState.currentInvoice.items.length === 0) {
+    loadSampleData();
+  } else {
+    syncFormInputs();
+    renderEditorRows();
+    renderLivePreview();
+  }
+});
+
+function loadDataFromStorage() {
+  try {
+    const storedPlat = localStorage.getItem(STORAGE_KEYS.MASTER_PLAT);
+    if (storedPlat) {
+      AppState.platList = JSON.parse(storedPlat);
+    } else {
+      AppState.platList = [...DEFAULT_PLAT_LIST];
+      saveMasterPlatToStorage();
+    }
+
+    const storedHistory = localStorage.getItem(STORAGE_KEYS.INVOICE_HISTORY);
+    if (storedHistory) {
+      AppState.historyList = JSON.parse(storedHistory);
+    }
+
+    const storedDraft = localStorage.getItem(STORAGE_KEYS.CURRENT_DRAFT);
+    if (storedDraft) {
+      const parsedDraft = JSON.parse(storedDraft);
+      if (parsedDraft && parsedDraft.items && parsedDraft.items.length > 0) {
+        AppState.currentInvoice = parsedDraft;
+      }
+    }
+  } catch (err) {
+    console.error('Gagal membaca LocalStorage:', err);
+    AppState.platList = [...DEFAULT_PLAT_LIST];
+  }
+}
+
+function saveMasterPlatToStorage() {
+  localStorage.setItem(STORAGE_KEYS.MASTER_PLAT, JSON.stringify(AppState.platList));
+}
+
+function saveHistoryToStorage() {
+  localStorage.setItem(STORAGE_KEYS.INVOICE_HISTORY, JSON.stringify(AppState.historyList));
+}
+
+function saveCurrentDraft() {
+  localStorage.setItem(STORAGE_KEYS.CURRENT_DRAFT, JSON.stringify(AppState.currentInvoice));
+}
+
+// Data sampel 100% persis contoh Excel yang dikirimkan user
+function loadSampleData() {
+  AppState.currentInvoice = {
+    lokasiProyek: 'CONDO VILLAS SUMMARECON',
+    tanggalInvoice: '2026-10-10',
+    kotaInvoice: 'Tangerang',
+    namaPenandatangan: 'MADROPI',
+    keteranganDefault: 'CV. SUMMARECON',
+    items: [
+      {
+        tanggal: '2026-10-05',
+        plat: 'B 9451 GYV',
+        panjang: 580,
+        lebar: 235,
+        tinggi: 170,
+        volume: 23.171,
+        harga: 200000,
+        total: 4634200,
+        keterangan: 'CV. SUMMARECON'
+      },
+      {
+        tanggal: '2026-10-05',
+        plat: 'BA 9873 BU',
+        panjang: 600,
+        lebar: 235,
+        tinggi: 160,
+        volume: 22.56,
+        harga: 200000,
+        total: 4512000,
+        keterangan: 'CV. SUMMARECON'
+      },
+      {
+        tanggal: '2026-10-06',
+        plat: 'B 9207 UYT',
+        panjang: 600,
+        lebar: 235,
+        tinggi: 160,
+        volume: 22.56,
+        harga: 200000,
+        total: 4512000,
+        keterangan: 'CV. SUMMARECON'
+      },
+      {
+        tanggal: '2026-10-06',
+        plat: 'BA 9873 BU',
+        panjang: 600,
+        lebar: 235,
+        tinggi: 160,
+        volume: 22.56,
+        harga: 200000,
+        total: 4512000,
+        keterangan: 'CV. SUMMARECON'
+      },
+      {
+        tanggal: '2026-10-06',
+        plat: 'B 9451 GYV',
+        panjang: 580,
+        lebar: 235,
+        tinggi: 170,
+        volume: 23.171,
+        harga: 200000,
+        total: 4634200,
+        keterangan: 'CV. SUMMARECON'
+      }
+    ]
+  };
+
+  syncFormInputs();
+  renderEditorRows();
+  renderLivePreview();
+  saveCurrentDraft();
+}
+
+function syncFormInputs() {
+  document.getElementById('input-lokasi-proyek').value = AppState.currentInvoice.lokasiProyek || '';
+  document.getElementById('input-tanggal-invoice').value = AppState.currentInvoice.tanggalInvoice || getTodayIsoString();
+  document.getElementById('input-kota-invoice').value = AppState.currentInvoice.kotaInvoice || 'Tangerang';
+  document.getElementById('input-penandatangan').value = AppState.currentInvoice.namaPenandatangan || 'MADROPI';
+  document.getElementById('input-keterangan-default').value = AppState.currentInvoice.keteranganDefault || 'CV. SUMMARECON';
+}
+
+function addInvoiceRow(customData = null) {
+  if (AppState.currentInvoice.items.length >= 9) {
+    if (!confirm('Format lembar cetak standar Excel memiliki batas 9 baris data agar pas dalam 1 halaman A4. Apakah Anda tetap ingin menambah baris?')) {
+      return;
+    }
+  }
+
+  const lastItem = AppState.currentInvoice.items[AppState.currentInvoice.items.length - 1];
+  const defaultDate = lastItem ? lastItem.tanggal : (AppState.currentInvoice.tanggalInvoice || getTodayIsoString());
+  const defaultKet = AppState.currentInvoice.keteranganDefault || 'CV. SUMMARECON';
+
+  let firstPlat = AppState.platList[0] || { nomor: '', panjang: 0, lebar: 0, tinggi: 0 };
+
+  const newItem = customData || {
+    tanggal: defaultDate,
+    plat: firstPlat.nomor,
+    panjang: firstPlat.panjang || 0,
+    lebar: firstPlat.lebar || 0,
+    tinggi: firstPlat.tinggi || 0,
+    volume: 0,
+    harga: 200000,
+    total: 0,
+    keterangan: defaultKet
+  };
+
+  if (newItem.panjang && newItem.lebar && newItem.tinggi) {
+    const volRaw = (newItem.panjang * newItem.lebar * newItem.tinggi) / 1000000;
+    newItem.volume = Math.round(volRaw * 1000) / 1000;
+    newItem.total = Math.round(newItem.volume * 200000);
+  }
+
+  AppState.currentInvoice.items.push(newItem);
+  renderEditorRows();
+  renderLivePreview();
+  saveCurrentDraft();
+}
+
+function removeInvoiceRow(index) {
+  if (AppState.currentInvoice.items.length <= 1) {
+    alert('Invoice harus memiliki minimal 1 baris pengiriman!');
+    return;
+  }
+  AppState.currentInvoice.items.splice(index, 1);
+  renderEditorRows();
+  renderLivePreview();
+  saveCurrentDraft();
+}
+
+function duplicateInvoiceRow(index) {
+  const item = AppState.currentInvoice.items[index];
+  if (item) {
+    const copy = { ...item };
+    AppState.currentInvoice.items.splice(index + 1, 0, copy);
+    renderEditorRows();
+    renderLivePreview();
+    saveCurrentDraft();
+  }
+}
+
+function renderEditorRows() {
+  const tbody = document.getElementById('editor-table-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  AppState.currentInvoice.items.forEach((item, index) => {
+    const tr = document.createElement('tr');
+
+    let platOptions = `<option value="">-- Pilih Plat --</option>`;
+    AppState.platList.forEach(p => {
+      const selected = (p.nomor === item.plat) ? 'selected' : '';
+      platOptions += `<option value="${escapeHtml(p.nomor)}" ${selected}>${escapeHtml(p.nomor)}</option>`;
+    });
+
+    const platExistsInMaster = AppState.platList.some(p => p.nomor === item.plat);
+    if (item.plat && !platExistsInMaster) {
+      platOptions += `<option value="${escapeHtml(item.plat)}" selected>${escapeHtml(item.plat)} (Manual)</option>`;
+    }
+
+    tr.innerHTML = `
+      <td class="col-no">${index + 1}</td>
+      <td class="col-date">
+        <input type="date" class="form-control row-date" data-index="${index}" value="${item.tanggal || ''}">
+      </td>
+      <td class="col-plat">
+        <select class="form-control row-plat" data-index="${index}">
+          ${platOptions}
+        </select>
+      </td>
+      <td class="col-dim">
+        <input type="number" class="form-control row-p" data-index="${index}" value="${item.panjang || ''}" placeholder="P" step="any">
+      </td>
+      <td class="col-dim">
+        <input type="number" class="form-control row-l" data-index="${index}" value="${item.lebar || ''}" placeholder="L" step="any">
+      </td>
+      <td class="col-dim">
+        <input type="number" class="form-control row-t" data-index="${index}" value="${item.tinggi || ''}" placeholder="T" step="any">
+      </td>
+      <td class="col-vol">
+        <span class="row-vol-display">${formatVolume(item.volume)}</span>
+      </td>
+      <td class="col-price">
+        <span>200.000</span>
+      </td>
+      <td class="col-tot">
+        <span class="row-tot-display">${formatRupiah(item.total)}</span>
+      </td>
+      <td class="col-ket">
+        <input type="text" class="form-control row-ket" data-index="${index}" value="${escapeHtml(item.keterangan || '')}">
+      </td>
+      <td class="col-act">
+        <div style="display: flex; gap: 4px; justify-content: center;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="duplicateInvoiceRow(${index})" title="Duplikasi Baris">📋</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeInvoiceRow(${index})" title="Hapus Baris">✕</button>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  attachEditorEvents();
+  updateEditorTotals();
+}
+
+function attachEditorEvents() {
+  const tbody = document.getElementById('editor-table-body');
+  if (!tbody) return;
+
+  tbody.querySelectorAll('.row-date').forEach(input => {
+    input.addEventListener('change', (e) => {
+      const idx = parseInt(e.target.dataset.index, 10);
+      AppState.currentInvoice.items[idx].tanggal = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  });
+
+  tbody.querySelectorAll('.row-plat').forEach(select => {
+    select.addEventListener('change', (e) => {
+      const idx = parseInt(e.target.dataset.index, 10);
+      const platNomor = e.target.value;
+      AppState.currentInvoice.items[idx].plat = platNomor;
+
+      const masterPlat = AppState.platList.find(p => p.nomor === platNomor);
+      if (masterPlat) {
+        AppState.currentInvoice.items[idx].panjang = masterPlat.panjang || 0;
+        AppState.currentInvoice.items[idx].lebar = masterPlat.lebar || 0;
+        AppState.currentInvoice.items[idx].tinggi = masterPlat.tinggi || 0;
+      }
+
+      recalculateRow(idx);
+      renderEditorRows();
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  });
+
+  ['row-p', 'row-l', 'row-t'].forEach(className => {
+    tbody.querySelectorAll(`.${className}`).forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        const p = parseFloat(tbody.querySelector(`.row-p[data-index="${idx}"]`).value) || 0;
+        const l = parseFloat(tbody.querySelector(`.row-l[data-index="${idx}"]`).value) || 0;
+        const t = parseFloat(tbody.querySelector(`.row-t[data-index="${idx}"]`).value) || 0;
+
+        AppState.currentInvoice.items[idx].panjang = p;
+        AppState.currentInvoice.items[idx].lebar = l;
+        AppState.currentInvoice.items[idx].tinggi = t;
+
+        recalculateRow(idx);
+        updateEditorTotals();
+        renderLivePreview();
+        saveCurrentDraft();
+      });
+    });
+  });
+
+  tbody.querySelectorAll('.row-ket').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const idx = parseInt(e.target.dataset.index, 10);
+      AppState.currentInvoice.items[idx].keterangan = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  });
+}
+
+function recalculateRow(index) {
+  const item = AppState.currentInvoice.items[index];
+  if (!item) return;
+
+  const p = Number(item.panjang) || 0;
+  const l = Number(item.lebar) || 0;
+  const t = Number(item.tinggi) || 0;
+
+  // Rumus persis Excel: ROUND(D*E*F/1000000, 3)
+  const volM3 = (p * l * t) / 1000000;
+  const volumeBulat = Math.round(volM3 * 1000) / 1000;
+
+  const harga = 200000;
+  // Total = Volume * Harga
+  const total = Math.round(volumeBulat * harga);
+
+  item.volume = volumeBulat;
+  item.harga = harga;
+  item.total = total;
+
+  const row = document.querySelector(`#editor-table-body tr:nth-child(${index + 1})`);
+  if (row) {
+    const volElem = row.querySelector('.row-vol-display');
+    const totElem = row.querySelector('.row-tot-display');
+    if (volElem) volElem.textContent = formatVolume(volumeBulat);
+    if (totElem) totElem.textContent = formatRupiah(total);
+  }
+}
+
+function updateEditorTotals() {
+  const grandTotal = AppState.currentInvoice.items.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+  const terbilangStr = terbilangIndonesia(grandTotal);
+
+  const grandValElem = document.getElementById('editor-grand-total');
+  const terbilangElem = document.getElementById('editor-terbilang');
+
+  if (grandValElem) grandValElem.textContent = 'Rp ' + formatRupiah(grandTotal);
+  if (terbilangElem) terbilangElem.textContent = terbilangStr;
+}
+
+// Render Live Preview (PERSIS 100% EXCEL)
+function renderLivePreview() {
+  const paper = document.getElementById('invoice-paper');
+  if (!paper) return;
+
+  const invoice = AppState.currentInvoice;
+  const items = invoice.items || [];
+
+  const grandTotal = items.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+  const terbilangStr = terbilangIndonesia(grandTotal);
+
+  const tanggalBawahFormatted = formatTanggalIndo(invoice.tanggalInvoice || getTodayIsoString());
+  const kotaInvoice = invoice.kotaInvoice || 'Tangerang';
+  const namaPenandatangan = invoice.namaPenandatangan || 'MADROPI';
+  const lokasiProyek = invoice.lokasiProyek || 'CONDO VILLAS SUMMARECON';
+
+  let rowsHtml = '';
+  items.forEach((item, index) => {
+    const tanggalBarisIndo = formatTanggalIndo(item.tanggal);
+    const volumeStr = formatVolume(item.volume);
+    const totalStr = formatRupiah(item.total);
+
+    rowsHtml += `
+      <tr>
+        <td style="width: 36px; text-align: center;">${index + 1}</td>
+        <td style="width: 108px; text-align: center;">${escapeHtml(tanggalBarisIndo)}</td>
+        <td style="width: 108px; text-align: center;">${escapeHtml(item.plat || '')}</td>
+        <td style="width: 84px; text-align: center;">${item.panjang || ''}</td>
+        <td style="width: 72px; text-align: center;">${item.lebar || ''}</td>
+        <td style="width: 78px; text-align: center;">${item.tinggi || ''}</td>
+        <td style="width: 84px; text-align: center;">${volumeStr}</td>
+        <td style="width: 90px; text-align: center;">200.000</td>
+        <td style="width: 108px; text-align: center;">${totalStr}</td>
+        <td style="width: 120px; text-align: center;">${escapeHtml(item.keterangan || '')}</td>
+      </tr>
+    `;
+  });
+
+  // Tampilkan baris kosong bergaris jika baris kurang dari slot standar template (9 baris)
+  const maxSlots = 9;
+  const emptyRowsNeeded = Math.max(0, maxSlots - items.length);
+  for (let i = 0; i < emptyRowsNeeded; i++) {
+    rowsHtml += `
+      <tr style="height: 19.5pt;">
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+    `;
+  }
+
+  const grandTotalFormatted = formatRupiah(grandTotal);
+
+  paper.innerHTML = `
+    <!-- Header Dokumen (Row 1 & 2 di Excel) -->
+    <div class="inv-title-container">
+      <div class="inv-main-title">REKAPITULASI PENGIRIMAN MATERIAL MAKADAM (INVOICE)</div>
+      <div class="inv-sub-title">Lokasi Proyek : ${escapeHtml(lokasiProyek)}</div>
+    </div>
+
+    <!-- Tabel Rekapitulasi (Row 4 s/d 15 di Excel) -->
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width: 36px;">No</th>
+          <th rowspan="2" style="width: 108px;">Tanggal</th>
+          <th rowspan="2" style="width: 108px;">Plat Nomor</th>
+          <th colspan="3" style="width: 234px;">Dimensi Mobil</th>
+          <th rowspan="2" style="width: 84px;">Volume<br>(m3)</th>
+          <th rowspan="2" style="width: 90px;">Harga / m3</th>
+          <th rowspan="2" style="width: 108px;">Total</th>
+          <th rowspan="2" style="width: 120px;">Keterangan</th>
+        </tr>
+        <tr>
+          <th style="width: 84px;">Panjang (m)</th>
+          <th style="width: 72px;">Lebar (m)</th>
+          <th style="width: 78px;">Tinggi (m)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+        <!-- Baris GRAND TOTAL (Row 15 di Excel) -->
+        <tr class="grand-total-row">
+          <td colspan="8" class="grand-total-label">GRAND TOTAL</td>
+          <td class="grand-total-value">${grandTotalFormatted}</td>
+          <td class="grand-total-yellow-blank"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Bagian Terbilang (Row 17 di Excel) -->
+    <div class="inv-terbilang-box">
+      Terbilang :  ${escapeHtml(terbilangStr)}
+    </div>
+
+    <!-- Catatan & Tanda Tangan (Row 19 s/d 33 di Excel) -->
+    <div class="inv-footer-layout">
+      <!-- Catatan (Kiri) - JANGAN DIUBAH -->
+      <div class="inv-notes-box">
+        <div class="inv-notes-title">Catatan :</div>
+        <div>1. Pembayaran dilakukan secara transfer ke rekening tujuan</div>
+        <div style="white-space: pre-wrap;">No. Rek Bank BCA     723-544-6995 A/N RETNO HANDAYANI</div>
+      </div>
+
+      <!-- Tanda Tangan & Tanggal (Kanan - Col G s/d J di Excel) -->
+      <div class="inv-signature-box">
+        <div class="inv-sig-date">${escapeHtml(kotaInvoice)}, ${escapeHtml(tanggalBawahFormatted)}</div>
+        <div class="inv-sig-name">${escapeHtml(namaPenandatangan)}</div>
+      </div>
+    </div>
+  `;
+}
+
+
+// =========================================================
+// EKSPOR KE EXCEL ASLI (.XLSX) - MENDUKUNG GITHUB PAGES & LOCAL SERVER
+// =========================================================
+async function downloadExcelTemplate() {
+  const invoice = AppState.currentInvoice;
+  const items = invoice.items || [];
+  const grandTotal = items.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+  const terbilangStr = terbilangIndonesia(grandTotal);
+
+  const payload = {
+    lokasiProyek: invoice.lokasiProyek || 'CONDO VILLAS SUMMARECON',
+    tanggalInvoice: invoice.tanggalInvoice || getTodayIsoString(),
+    kotaInvoice: invoice.kotaInvoice || 'Tangerang',
+    namaPenandatangan: invoice.namaPenandatangan || 'MADROPI',
+    keteranganDefault: invoice.keteranganDefault || 'CV. SUMMARECON',
+    terbilang: terbilangStr,
+    items: items
+  };
+
+  const btnExcel = document.getElementById('btn-download-excel');
+  const originalHtml = btnExcel ? btnExcel.innerHTML : '';
+  if (btnExcel) {
+    btnExcel.innerHTML = '⏳ Menyiapkan Excel...';
+    btnExcel.disabled = true;
+  }
+
+  const safeProject = (payload.lokasiProyek || 'Makadam').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const filename = `Invoice_${safeProject}_${payload.tanggalInvoice || 'tanggal'}.xlsx`;
+
+  // 1. CARA PERTAMA: Gunakan ExcelJS langsung di browser (Mendukung 100% GitHub Pages!)
+  if (window.ExcelJS) {
+    try {
+      let arrayBuffer;
+      try {
+        const resp = await fetch('template.xlsx');
+        if (resp.ok) {
+          arrayBuffer = await resp.arrayBuffer();
+        }
+      } catch (fetchErr) {
+        // Fetch lokal gagal, lanjut ke cara server
+      }
+
+      if (arrayBuffer) {
+        const wb = new ExcelJS.Workbook();
+        await wb.xlsx.load(arrayBuffer);
+        const ws = wb.getWorksheet(1);
+
+        // 1. Lokasi Proyek di A2
+        ws.getCell('A2').value = `Lokasi Proyek : ${payload.lokasiProyek}`;
+
+        // 2. Baris Data (Row 6 s/d 14)
+        for (let r = 6; r <= 14; r++) {
+          const itemIdx = r - 6;
+          const item = items[itemIdx];
+          if (item) {
+            const vol = Number(item.volume) || ((item.panjang * item.lebar * item.tinggi) / 1000000);
+            const volRounded = Math.round(vol * 1000) / 1000;
+            const total = Number(item.total) || Math.round(volRounded * 200000);
+
+            ws.getCell(`A${r}`).value = itemIdx + 1;
+            ws.getCell(`B${r}`).value = formatTanggalIndo(item.tanggal);
+            ws.getCell(`C${r}`).value = item.plat || '';
+            ws.getCell(`D${r}`).value = Number(item.panjang) || null;
+            ws.getCell(`E${r}`).value = Number(item.lebar) || null;
+            ws.getCell(`F${r}`).value = Number(item.tinggi) || null;
+            ws.getCell(`G${r}`).value = { formula: `ROUND(D${r}*E${r}*F${r}/1000000,3)`, result: volRounded };
+            ws.getCell(`H${r}`).value = 200000;
+            ws.getCell(`I${r}`).value = { formula: `G${r}*H${r}`, result: total };
+            ws.getCell(`J${r}`).value = item.keterangan || '';
+          } else {
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'].forEach(col => {
+              ws.getCell(`${col}${r}`).value = null;
+            });
+          }
+        }
+
+        // 3. Grand Total di I15
+        ws.getCell('A15').value = 'GRAND TOTAL';
+        ws.getCell('I15').value = { formula: 'SUM(I6:I14)', result: grandTotal };
+
+        // 4. Terbilang di A17
+        ws.getCell('A17').value = `Terbilang :  ${terbilangStr}`;
+
+        // 5. Tanggal Invoice & Kota di G24
+        ws.getCell('G24').value = `${payload.kotaInvoice}, ${formatTanggalIndo(payload.tanggalInvoice)}`;
+
+        // 6. Penandatangan di G33
+        ws.getCell('G33').value = payload.namaPenandatangan;
+
+        const outBuffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([outBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        triggerDownloadBlob(blob, filename);
+
+        if (btnExcel) {
+          btnExcel.innerHTML = originalHtml;
+          btnExcel.disabled = false;
+        }
+        return;
+      }
+    } catch (clientErr) {
+      console.warn('Pembuatan Excel di browser dialihkan ke server:', clientErr);
+    }
+  }
+
+  // 2. CARA KEDUA: Panggil Server Lokal Node.js (/api/generate-xlsx)
+  try {
+    const response = await fetch('/api/generate-xlsx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+
+    const blob = await response.blob();
+    triggerDownloadBlob(blob, filename);
+  } catch (err) {
+    console.error('Gagal download Excel:', err);
+    alert(
+      'File Excel belum dapat dibuat secara langsung.\n\n' +
+      'Silakan gunakan tombol "Cetak / Simpan PDF" (Ctrl + P) untuk menyimpan invoice langsung ke format PDF yang rapi!'
+    );
+  } finally {
+    if (btnExcel) {
+      btnExcel.innerHTML = originalHtml;
+      btnExcel.disabled = false;
+    }
+  }
+}
+
+function triggerDownloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+function printInvoice() {
+  renderLivePreview();
+  window.print();
+}
+
+// Download PDF langsung via html2pdf.js
+function downloadPdfDirect() {
+  const element = document.getElementById('invoice-paper');
+  if (!element) return;
+
+  const lokasi = (AppState.currentInvoice.lokasiProyek || 'Makadam').replace(/[^a-zA-Z0-9]/g, '_');
+  const tanggal = AppState.currentInvoice.tanggalInvoice || 'tanggal';
+  const fileName = `Invoice_${lokasi}_${tanggal}.pdf`;
+
+  const opt = {
+    margin: [19, 6.35, 19, 6.35], // 0.75in atas-bawah, 0.25in kiri-kanan persis Excel
+    filename: fileName,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2.5,
+      useCORS: true,
+      letterRendering: true,
+      logging: false
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    }
+  };
+
+  const downloadBtn = document.getElementById('btn-download-pdf');
+  const originalText = downloadBtn ? downloadBtn.innerHTML : '';
+  if (downloadBtn) {
+    downloadBtn.innerHTML = '⏳ Menyiapkan PDF...';
+    downloadBtn.disabled = true;
+  }
+
+  html2pdf().set(opt).from(element).save().then(() => {
+    if (downloadBtn) {
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+    }
+  }).catch(err => {
+    console.error('Gagal membuat PDF langsung:', err);
+    alert('Terjadi kesalahan saat membuat PDF langsung. Silakan gunakan tombol "Cetak / Simpan PDF" (Ctrl + P).');
+    if (downloadBtn) {
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+    }
+  });
+}
+
+// =========================================================
+// Tab Master Plat Mobil (Armada)
+// =========================================================
+function renderMasterPlatTable() {
+  const tbody = document.getElementById('master-plat-tbody');
+  const countBadge = document.getElementById('plat-count-badge');
+  if (!tbody) return;
+
+  if (countBadge) countBadge.textContent = `${AppState.platList.length} Unit`;
+
+  tbody.innerHTML = '';
+
+  if (AppState.platList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--gray-600); padding: 20px;">Belum ada plat mobil yang didaftarkan.</td></tr>`;
+    return;
+  }
+
+  AppState.platList.forEach((plat, index) => {
+    const volRaw = (plat.panjang * plat.lebar * plat.tinggi) / 1000000;
+    const volStr = formatVolume(volRaw);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td><span class="plat-pill">${escapeHtml(plat.nomor)}</span></td>
+      <td>${plat.panjang} cm</td>
+      <td>${plat.lebar} cm</td>
+      <td>${plat.tinggi} cm</td>
+      <td><strong>${volStr} m³</strong></td>
+      <td>${escapeHtml(plat.keterangan || '-')}</td>
+      <td style="text-align: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="editPlat('${plat.id}')">✏️ Edit</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deletePlat('${plat.id}')">🗑️ Hapus</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderPlatDropdowns() {
+  renderEditorRows();
+}
+
+function openAddPlatModal() {
+  document.getElementById('modal-plat-title').textContent = 'Tambah Plat Mobil Baru';
+  document.getElementById('form-plat-id').value = '';
+  document.getElementById('form-plat-nomor').value = '';
+  document.getElementById('form-plat-p').value = '';
+  document.getElementById('form-plat-l').value = '';
+  document.getElementById('form-plat-t').value = '';
+  document.getElementById('form-plat-ket').value = '';
+  document.getElementById('modal-plat-preview-vol').textContent = '0 m³';
+
+  document.getElementById('modal-plat').classList.add('show');
+  document.getElementById('form-plat-nomor').focus();
+}
+
+function closePlatModal() {
+  document.getElementById('modal-plat').classList.remove('show');
+}
+
+function savePlatModal() {
+  const id = document.getElementById('form-plat-id').value;
+  const nomor = document.getElementById('form-plat-nomor').value.trim().toUpperCase();
+  const p = parseFloat(document.getElementById('form-plat-p').value) || 0;
+  const l = parseFloat(document.getElementById('form-plat-l').value) || 0;
+  const t = parseFloat(document.getElementById('form-plat-t').value) || 0;
+  const ket = document.getElementById('form-plat-ket').value.trim();
+
+  if (!nomor) {
+    alert('Mohon masukkan Nomor Plat mobil!');
+    return;
+  }
+
+  if (p <= 0 || l <= 0 || t <= 0) {
+    alert('Mohon masukkan dimensi Panjang, Lebar, dan Tinggi yang valid!');
+    return;
+  }
+
+  if (id) {
+    const item = AppState.platList.find(x => x.id === id);
+    if (item) {
+      item.nomor = nomor;
+      item.panjang = p;
+      item.lebar = l;
+      item.tinggi = t;
+      item.keterangan = ket;
+    }
+  } else {
+    const exists = AppState.platList.some(x => x.nomor === nomor);
+    if (exists) {
+      alert(`Plat nomor "${nomor}" sudah terdaftar! Gunakan nomor lain atau edit yang sudah ada.`);
+      return;
+    }
+
+    AppState.platList.push({
+      id: 'plat-' + Date.now(),
+      nomor,
+      panjang: p,
+      lebar: l,
+      tinggi: t,
+      keterangan: ket
+    });
+  }
+
+  saveMasterPlatToStorage();
+  renderMasterPlatTable();
+  renderPlatDropdowns();
+  closePlatModal();
+}
+
+function editPlat(id) {
+  const item = AppState.platList.find(x => x.id === id);
+  if (!item) return;
+
+  document.getElementById('modal-plat-title').textContent = 'Edit Plat Mobil';
+  document.getElementById('form-plat-id').value = item.id;
+  document.getElementById('form-plat-nomor').value = item.nomor;
+  document.getElementById('form-plat-p').value = item.panjang;
+  document.getElementById('form-plat-l').value = item.lebar;
+  document.getElementById('form-plat-t').value = item.tinggi;
+  document.getElementById('form-plat-ket').value = item.keterangan || '';
+
+  const vol = (item.panjang * item.lebar * item.tinggi) / 1000000;
+  document.getElementById('modal-plat-preview-vol').textContent = formatVolume(vol) + ' m³';
+
+  document.getElementById('modal-plat').classList.add('show');
+}
+
+function deletePlat(id) {
+  const item = AppState.platList.find(x => x.id === id);
+  if (!item) return;
+
+  if (confirm(`Yakin ingin menghapus plat mobil "${item.nomor}" dari daftar master?`)) {
+    AppState.platList = AppState.platList.filter(x => x.id !== id);
+    saveMasterPlatToStorage();
+    renderMasterPlatTable();
+    renderPlatDropdowns();
+  }
+}
+
+function setupPlatModalLiveVol() {
+  const pInput = document.getElementById('form-plat-p');
+  const lInput = document.getElementById('form-plat-l');
+  const tInput = document.getElementById('form-plat-t');
+  const preview = document.getElementById('modal-plat-preview-vol');
+
+  function update() {
+    const p = parseFloat(pInput.value) || 0;
+    const l = parseFloat(lInput.value) || 0;
+    const t = parseFloat(tInput.value) || 0;
+    const vol = (p * l * t) / 1000000;
+    preview.textContent = formatVolume(vol) + ' m³';
+  }
+
+  [pInput, lInput, tInput].forEach(inp => {
+    if (inp) inp.addEventListener('input', update);
+  });
+}
+
+// =========================================================
+// Tab Riwayat Invoice
+// =========================================================
+function saveCurrentToHistory() {
+  const invoice = AppState.currentInvoice;
+  if (!invoice.items || invoice.items.length === 0) {
+    alert('Tidak ada data invoice untuk disimpan!');
+    return;
+  }
+
+  const grandTotal = invoice.items.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+
+  const historyRecord = {
+    id: 'inv-' + Date.now(),
+    savedAt: new Date().toISOString(),
+    lokasiProyek: invoice.lokasiProyek || 'CONDO VILLAS SUMMARECON',
+    tanggalInvoice: invoice.tanggalInvoice,
+    kotaInvoice: invoice.kotaInvoice,
+    namaPenandatangan: invoice.namaPenandatangan,
+    keteranganDefault: invoice.keteranganDefault,
+    itemCount: invoice.items.length,
+    grandTotal: grandTotal,
+    items: JSON.parse(JSON.stringify(invoice.items))
+  };
+
+  AppState.historyList.unshift(historyRecord);
+  saveHistoryToStorage();
+  renderHistoryTable();
+
+  alert('Invoice berhasil disimpan ke riwayat!');
+}
+
+function renderHistoryTable() {
+  const tbody = document.getElementById('history-tbody');
+  const countBadge = document.getElementById('history-count-badge');
+  if (!tbody) return;
+
+  if (countBadge) countBadge.textContent = `${AppState.historyList.length} Disimpan`;
+
+  tbody.innerHTML = '';
+
+  if (AppState.historyList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-600); padding: 20px;">Belum ada riwayat invoice yang disimpan.</td></tr>`;
+    return;
+  }
+
+  AppState.historyList.forEach((hist, index) => {
+    const savedDate = new Date(hist.savedAt).toLocaleString('id-ID');
+    const grandFormatted = 'Rp ' + formatRupiah(hist.grandTotal);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td><strong>${escapeHtml(hist.lokasiProyek)}</strong><br><small style="color: var(--gray-600);">${formatTanggalIndo(hist.tanggalInvoice)}</small></td>
+      <td><span class="badge" style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px;">${hist.itemCount} Ritase</span></td>
+      <td><strong style="color: #854d0e;">${grandFormatted}</strong></td>
+      <td><small style="color: var(--gray-600);">${savedDate}</small></td>
+      <td style="text-align: center;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="loadHistoryItem('${hist.id}')">📂 Buka</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteHistoryItem('${hist.id}')">🗑️</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function loadHistoryItem(id) {
+  const hist = AppState.historyList.find(x => x.id === id);
+  if (!hist) return;
+
+  if (confirm(`Buka invoice "${hist.lokasiProyek}" di formulir editor? Draft saat ini akan digantikan.`)) {
+    AppState.currentInvoice = {
+      lokasiProyek: hist.lokasiProyek,
+      tanggalInvoice: hist.tanggalInvoice,
+      kotaInvoice: hist.kotaInvoice,
+      namaPenandatangan: hist.namaPenandatangan,
+      keteranganDefault: hist.keteranganDefault,
+      items: JSON.parse(JSON.stringify(hist.items))
+    };
+
+    syncFormInputs();
+    renderEditorRows();
+    renderLivePreview();
+    saveCurrentDraft();
+    switchTab('buat-invoice');
+  }
+}
+
+function deleteHistoryItem(id) {
+  if (confirm('Hapus invoice ini dari riwayat?')) {
+    AppState.historyList = AppState.historyList.filter(x => x.id !== id);
+    saveHistoryToStorage();
+    renderHistoryTable();
+  }
+}
+
+// Backup & Restore
+function exportBackupData() {
+  const data = {
+    app: 'MADROPI Invoice Pengiriman',
+    exportedAt: new Date().toISOString(),
+    platList: AppState.platList,
+    historyList: AppState.historyList,
+    currentInvoice: AppState.currentInvoice
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Backup_Madropi_${getTodayIsoString()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackupData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (parsed.platList && Array.isArray(parsed.platList)) {
+        AppState.platList = parsed.platList;
+        saveMasterPlatToStorage();
+        renderMasterPlatTable();
+        renderPlatDropdowns();
+      }
+      if (parsed.historyList && Array.isArray(parsed.historyList)) {
+        AppState.historyList = parsed.historyList;
+        saveHistoryToStorage();
+        renderHistoryTable();
+      }
+      if (parsed.currentInvoice) {
+        AppState.currentInvoice = parsed.currentInvoice;
+        syncFormInputs();
+        renderEditorRows();
+        renderLivePreview();
+        saveCurrentDraft();
+      }
+      alert('Data backup berhasil dipulihkan!');
+    } catch (err) {
+      alert('File backup tidak valid!');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Navigasi Tab
+function switchTab(targetTabId) {
+  AppState.activeTab = targetTabId;
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.dataset.tab === targetTabId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    if (pane.id === `tab-${targetTabId}`) {
+      pane.classList.add('active');
+    } else {
+      pane.classList.remove('active');
+    }
+  });
+
+  if (targetTabId === 'buat-invoice') {
+    renderLivePreview();
+  }
+}
+
+function initEventListeners() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  const inputLokasi = document.getElementById('input-lokasi-proyek');
+  if (inputLokasi) {
+    inputLokasi.addEventListener('input', (e) => {
+      AppState.currentInvoice.lokasiProyek = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const inputTgl = document.getElementById('input-tanggal-invoice');
+  if (inputTgl) {
+    inputTgl.addEventListener('change', (e) => {
+      AppState.currentInvoice.tanggalInvoice = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const inputKota = document.getElementById('input-kota-invoice');
+  if (inputKota) {
+    inputKota.addEventListener('input', (e) => {
+      AppState.currentInvoice.kotaInvoice = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const inputTtd = document.getElementById('input-penandatangan');
+  if (inputTtd) {
+    inputTtd.addEventListener('input', (e) => {
+      AppState.currentInvoice.namaPenandatangan = e.target.value;
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const inputKetDef = document.getElementById('input-keterangan-default');
+  if (inputKetDef) {
+    inputKetDef.addEventListener('input', (e) => {
+      AppState.currentInvoice.keteranganDefault = e.target.value;
+      saveCurrentDraft();
+    });
+  }
+
+  const btnApplyKet = document.getElementById('btn-apply-ket-all');
+  if (btnApplyKet) {
+    btnApplyKet.addEventListener('click', () => {
+      const ket = document.getElementById('input-keterangan-default').value;
+      AppState.currentInvoice.items.forEach(it => it.keterangan = ket);
+      renderEditorRows();
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const btnApplyDate = document.getElementById('btn-apply-date-all');
+  if (btnApplyDate) {
+    btnApplyDate.addEventListener('click', () => {
+      const tgl = document.getElementById('input-tanggal-invoice').value;
+      AppState.currentInvoice.items.forEach(it => it.tanggal = tgl);
+      renderEditorRows();
+      renderLivePreview();
+      saveCurrentDraft();
+    });
+  }
+
+  const btnAddRow = document.getElementById('btn-add-row');
+  if (btnAddRow) {
+    btnAddRow.addEventListener('click', () => addInvoiceRow());
+  }
+
+  const btnReset = document.getElementById('btn-new-invoice');
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      if (confirm('Buat invoice baru? Formulir saat ini akan dikosongkan.')) {
+        AppState.currentInvoice = {
+          lokasiProyek: 'CONDO VILLAS SUMMARECON',
+          tanggalInvoice: getTodayIsoString(),
+          kotaInvoice: 'Tangerang',
+          namaPenandatangan: 'MADROPI',
+          keteranganDefault: 'CV. SUMMARECON',
+          items: []
+        };
+        addInvoiceRow();
+        syncFormInputs();
+      }
+    });
+  }
+
+  const btnLoadSample = document.getElementById('btn-load-sample');
+  if (btnLoadSample) {
+    btnLoadSample.addEventListener('click', () => {
+      if (confirm('Muat data contoh persis sesuai dokumen Excel yang Anda kirimkan?')) {
+        loadSampleData();
+      }
+    });
+  }
+
+  // Tombol Download Excel Template (.xlsx)
+  const btnDownloadExcel = document.getElementById('btn-download-excel');
+  if (btnDownloadExcel) {
+    btnDownloadExcel.addEventListener('click', downloadExcelTemplate);
+  }
+
+  // Tombol Cetak / Simpan PDF
+  const btnPrint = document.getElementById('btn-print-invoice');
+  if (btnPrint) {
+    btnPrint.addEventListener('click', printInvoice);
+  }
+
+  // Tombol Unduh PDF Langsung
+  const btnDownloadPdf = document.getElementById('btn-download-pdf');
+  if (btnDownloadPdf) {
+    btnDownloadPdf.addEventListener('click', downloadPdfDirect);
+  }
+
+  // Tombol Simpan ke Riwayat
+  const btnSaveHist = document.getElementById('btn-save-history');
+  if (btnSaveHist) {
+    btnSaveHist.addEventListener('click', saveCurrentToHistory);
+  }
+
+  // Backup Export & Import
+  const btnExport = document.getElementById('btn-export-backup');
+  if (btnExport) btnExport.addEventListener('click', exportBackupData);
+
+  const inputImport = document.getElementById('input-import-backup');
+  if (inputImport) inputImport.addEventListener('change', importBackupData);
+
+  setupPlatModalLiveVol();
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+  </script>
 
 </body>
 </html>
